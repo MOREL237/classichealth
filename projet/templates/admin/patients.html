@@ -1,0 +1,33 @@
+{% extends "admin/base_admin.html" %}
+{% block titre %}Patients · Espace secrétariat{% endblock %}
+
+{% block contenu %}
+<div class="container ad-wrap">
+  <h1 class="ad-title">Patients <small>{{ total }} résultat{{ 's' if total > 1 }}</small></h1>
+  <form class="ad-filters" method="get">
+    <input class="rv-input" name="q" value="{{ q }}" placeholder="Nom, prénom, téléphone ou ville" aria-label="Recherche">
+    <button class="btn btn-primary btn-sm" type="submit">Rechercher</button>
+    <a class="btn btn-secondary btn-sm" href="{{ url_for('admin.patients') }}">Réinitialiser</a>
+  </form>
+  <div class="ad-card ad-scroll">
+    <table class="ad-table">
+      <thead><tr><th>Patient</th><th>Téléphone</th><th>Naissance</th><th>Ville</th><th>Inscrit le</th><th>Rendez-vous</th><th>Dernier</th></tr></thead>
+      <tbody>
+      {% for p in lignes %}
+        <tr><td>{{ p.prenom }} {{ p.nom }}</td><td>{{ p.telephone }}</td><td>{{ p.date_naissance|fr_date }}</td><td>{{ p.ville }}</td>
+            <td>{{ p.date_creation|fr_date }}</td><td>{{ p.nb_rdv }}</td><td>{{ p.dernier_rdv|fr_date if p.dernier_rdv else '—' }}</td></tr>
+      {% else %}
+        <tr><td colspan="7" class="ad-vide">Aucun patient trouvé.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if pages > 1 %}
+  <nav class="ad-pager" aria-label="Pagination">
+    {% if page > 1 %}<a class="btn btn-secondary btn-sm" href="{{ url_for('admin.patients', page=page-1, q=q) }}">← Précédent</a>{% endif %}
+    <span>Page {{ page }} / {{ pages }}</span>
+    {% if page < pages %}<a class="btn btn-secondary btn-sm" href="{{ url_for('admin.patients', page=page+1, q=q) }}">Suivant →</a>{% endif %}
+  </nav>
+  {% endif %}
+</div>
+{% endblock %}

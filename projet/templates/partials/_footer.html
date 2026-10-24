@@ -1,0 +1,54 @@
+<footer class="ch-footer">
+  <div class="container footer-grid">
+    <div>
+      <div class="brand-logo footer-brand">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="40" height="40" rx="10" fill="#0D9488"/>
+          <path d="M10 20h5l3-7 5 14 4-10 2 3h5" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="brand-name">Classic<span>Health</span></div>
+      </div>
+      <p class="footer-desc">Clinique privée de référence à Douala. Offrant des soins de santé rigoureux, modernes et accessibles pour toute la famille.</p>
+    </div>
+
+    <div class="footer-col">
+      <h5>Pôles Médicaux</h5>
+      <ul class="footer-links">
+        {% for s in specialites %}
+        <li><a href="{{ url_for('medecins', specialite=s.nom) }}">{{ s.nom }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h5>Informations</h5>
+      <ul class="footer-links">
+        <li><a href="{{ url_for('accueil') }}#infos-clinique">Horaires des consultations</a></li>
+        <li><a href="#">Accès &amp; Stationnement</a></li>
+        <li><a href="{{ url_for('mes_consultations') }}">Mes consultations</a></li>
+        <li><a href="{{ url_for('admin.connexion') }}">Espace secrétariat</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h5>Clinique ClassicHealth</h5>
+      <div class="contact-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <span>Boulevard de la Liberté, Akwa · Douala, Cameroun</span>
+      </div>
+      <div class="contact-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        <span>(+237) 699 45 88 12 / 677 30 19 00</span>
+      </div>
+      <div class="contact-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>Créneaux : Lun - Sam (08h00 - 12h00)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="container footer-bottom">
+    <div>&copy; {{ annee }} ClassicHealth Clinique Privée Douala. Tous droits réservés.</div>
+    <div>« Votre santé, à portée de clic. »</div>
+  </div>
+</footer>

@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block titre %}Accueil · ClassicHealth Clinique Privée Douala{% endblock %}
+
+{% block splash %}{% include "partials/_splash.html" %}{% endblock %}
+
+{# Icônes SVG par spécialité (clé = valeur de la colonne medecins.specialite) #}
+{% set icones = {
+  'Cardiologie': '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>',
+  'Pédiatrie': '<path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
+  'Médecine générale': '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+  'Dermatologie': '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>'
+} %}
+
+{% block contenu %}
+<!-- HERO -->
+<section class="hero-section">
+  <div class="container hero-grid">
+    <div class="hero-content">
+      <div class="pill-badge"><span class="pill-dot"></span>Clinique Privée d'Excellence · Akwa / Bonanjo</div>
+
+      <h1 class="hero-title">Votre santé à Douala, <span>à portée de clic.</span></h1>
+
+      <p class="hero-subtitle">Consultez les créneaux disponibles en temps réel, choisissez votre médecin spécialiste et réservez votre rendez-vous sans attente téléphonique.</p>
+
+      <div class="hero-ctas">
+        <a class="btn btn-primary btn-lg" href="{{ url_for('rendez_vous') }}">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Prendre un rendez-vous
+        </a>
+        <a class="btn btn-secondary btn-lg" href="#comment-ca-marche">Découvrir la clinique</a>
+      </div>
+
+      <div class="kpi-row">
+        <div class="kpi-item"><h4>{{ nb_medecins }}</h4><p>Médecins spécialistes permanents</p></div>
+        <div class="kpi-item"><h4>{{ specialites|length }}</h4><p>Pôles médicaux spécialisés</p></div>
+        <div class="kpi-item"><h4>08h – 12h</h4><p>Consultations matinales dédiées</p></div>
+      </div>
+    </div>
+
+    <!-- Aperçu visuel (exemple de créneaux, non interactif) -->
+    <div class="hero-card-preview">
+      <div class="preview-header">
+        <div>
+          <div class="preview-title">Disponibilités du jour à Douala</div>
+          <div class="preview-sub">Exemple de créneaux de consultation</div>
+        </div>
+        <span class="status-indicator"><span class="status-dot"></span>Ouvert</span>
+      </div>
+
+      {% if vedette %}
+      <div class="doctor-preview-item">
+        <div class="doctor-avatar">{{ vedette.initiales }}</div>
+        <div class="doctor-info">
+          <h5>{{ vedette.nom }}</h5>
+          <p>{{ vedette.specialite }}</p>
+        </div>
+      </div>
+      {% endif %}
+
+      <div class="time-slot-preview">
+        <span class="time-slot-label">Prochains créneaux de consultation</span>
+        <div class="slot-chips">
+          <div class="mini-slot disabled">08:00</div>
+          <div class="mini-slot active">08:30</div>
+          <div class="mini-slot">09:00</div>
+          <div class="mini-slot">09:30</div>
+        </div>
+      </div>
+
+      <div class="preview-footer">
+        <span>Pas de 30 minutes · Prise en charge immédiate</span>
+        <span>Clinique ClassicHealth</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SPÉCIALITÉS (données lues dans la base) -->
+<section class="section" id="specialites">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Nos Pôles Médicaux</span>
+      <h2 class="section-title">Des praticiens chevronnés à votre service</h2>
+      <p class="section-desc">Consultez nos médecins spécialisés dans un cadre moderne, confidentiel et équipé des dernières technologies de diagnostic.</p>
+    </div>
+
+    <div class="specialties-grid">
+      {% for s in specialites %}
+      <a class="specialty-card" href="{{ url_for('medecins', specialite=s.nom) }}">
+        <div>
+          <div class="specialty-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">{{ icones.get(s.nom, icones['Médecine générale'])|safe }}</svg>
+          </div>
+          <h3 class="specialty-name">{{ s.nom }}</h3>
+          <p class="specialty-desc">{{ s.description }}</p>
+          <p class="specialty-days">Consultations : {{ s.jours }}</p>
+        </div>
+        <div class="specialty-footer">
+          <span>{{ s.nb_medecins }} médecin{{ 's' if s.nb_medecins > 1 }}</span>
+          <span class="arrow">Consulter →</span>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- COMMENT ÇA MARCHE -->
+<section class="section steps-section" id="comment-ca-marche">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Simplicité &amp; Rapidité</span>
+      <h2 class="section-title">Comment prendre rendez-vous ?</h2>
+      <p class="section-desc">En 3 étapes faciles, sans attente et avec confirmation instantanée par SMS.</p>
+    </div>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-number">1</div>
+        <h3>Choisissez un médecin</h3>
+        <p>Explorez les profils de nos praticiens, leurs spécialités et leurs jours de consultation attitrés.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">2</div>
+        <h3>Sélectionnez votre créneau</h3>
+        <p>Choisissez l'heure de votre choix entre 08h00 et 11h30. Les créneaux réservés sont grisés en direct pour éviter toute collision.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">3</div>
+        <h3>Recevez votre confirmation</h3>
+        <p>Validez avec votre numéro de téléphone camerounais (6XX XX XX XX). Téléchargez votre invitation calendrier (.ics) ou imprimez votre ticket.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BANDEAU HORAIRES -->
+<section class="container banner-cta" id="infos-clinique">
+  <div class="banner-box">
+    <div class="banner-content">
+      <h3>Besoin d'une consultation rapide à Douala ?</h3>
+      <p>Les consultations ont lieu tous les matins ouvrables de 08h00 à 12h00 précises. Notre équipe médicale garantit le respect strict des horaires réservés.</p>
+    </div>
+    <a class="btn banner-btn" href="{{ url_for('rendez_vous') }}">Prendre rendez-vous</a>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/accueil.js') }}"></script>
+{% endblock %}

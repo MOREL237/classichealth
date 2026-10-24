@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block titre %}Médecins &amp; Spécialistes · ClassicHealth Douala{% endblock %}
+
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/medecins.css') }}">{% endblock %}
+
+{% block contenu %}
+<section class="page-hero">
+  <div class="container">
+    <div class="hero-badge"><span class="pulse-dot"></span> Équipe Médicale Permanente · Douala</div>
+    <h1 class="page-title">Nos Praticiens &amp; Spécialistes</h1>
+    <p class="page-subtitle">Consultez l'équipe médicale permanente de ClassicHealth à Douala. Des créneaux garantis tous les matins de 08h00 à 12h00, sans temps d'attente.</p>
+
+    <div class="search-filter-card">
+      <div class="search-input-wrapper">
+        <svg class="search-input-icon" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewBox="0 0 24 24" width="18"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input class="search-input" id="searchInput" type="text" placeholder="Rechercher par praticien ou spécialité..." aria-label="Recherche de médecin">
+      </div>
+
+      <div class="chips-bar" role="tablist" aria-label="Filtrer par spécialité">
+        <button type="button" class="filter-chip {{ 'active' if not filtre }}" role="tab" aria-selected="{{ 'true' if not filtre else 'false' }}" data-specialite="">
+          <span>Toutes les spécialités</span><span class="chip-count">{{ medecins|length }}</span>
+        </button>
+        {% for s in specialites %}
+        <button type="button" class="filter-chip {{ 'active' if filtre == s.nom }}" role="tab" aria-selected="{{ 'true' if filtre == s.nom else 'false' }}" data-specialite="{{ s.nom }}">
+          <span>{{ s.nom }}</span><span class="chip-count">{{ s.nb_medecins }}</span>
+        </button>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="results-meta">
+      <div class="results-count" id="resultsCount"></div>
+      <div class="consultation-badge-info">
+        <svg fill="none" height="15" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="15"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Consultations matinales sans attente : 08h00 – 12h00
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container">
+  <div class="doctors-grid">
+    {% for m in medecins %}
+    <article class="med-card" data-id="{{ m.id }}" data-specialite="{{ m.specialite }}" data-recherche="{{ (m.nom ~ ' ' ~ m.specialite)|lower }}">
+      <div class="med-header">
+        <div class="med-avatar-wrap">
+          <div class="med-avatar">
+            {% if m.photo %}<img src="{{ url_for('static', filename='images/' ~ m.photo) }}" alt="{{ m.nom }}">{% else %}{{ m.initiales }}{% endif %}
+          </div>
+          <div class="med-status" title="En service"></div>
+        </div>
+        <div>
+          <span class="med-badge">{{ m.specialite }}</span>
+          <h3 class="med-name">{{ m.nom }}</h3>
+        </div>
+      </div>
+
+      <div class="med-meta">
+        <div class="meta-row">
+          <span class="meta-label">
+            <svg fill="none" height="14" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14"><rect height="18" rx="2" ry="2" width="18" x="3" y="4"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+            Jours de consultation
+          </span>
+          <div class="days-pill-group">
+            {% for lettre, nom_jour, actif in m.pastilles %}
+            <span class="day-pill {{ 'active' if actif }}" title="{{ nom_jour }} : {{ 'consultations ouvertes' if actif else 'pas de consultation' }}">{{ lettre }}</span>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div class="next-slot-box">
+        <span class="next-slot-label">Prochain créneau</span>
+        <span class="next-slot-time">
+          <svg fill="none" height="14" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          {{ m.prochain or 'Aucun créneau libre sous 2 semaines' }}
+        </span>
+      </div>
+
+      <div class="doctor-actions">
+        <button type="button" class="btn btn-secondary btn-sm" data-ouvrir="{{ m.id }}">Disponibilités</button>
+        <a class="btn btn-primary btn-sm" href="{{ url_for('rendez_vous', medecin=m.id) }}">Prendre RDV</a>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+
+  <div class="empty-state" id="emptyState" hidden>
+    <h3 class="empty-title">Aucun praticien ne correspond à votre recherche</h3>
+    <p class="empty-text">Effacez votre recherche ou choisissez une autre spécialité pour voir toute l'équipe.</p>
+    <button type="button" class="btn btn-secondary" id="btnReset">Réinitialiser les filtres</button>
+  </div>
+
+  <div class="cta-banner">
+    <div>
+      <h3>Besoin d'une consultation prioritaire ?</h3>
+      <p>Notre secrétariat médical vous oriente vers le spécialiste adapté à votre situation dès votre arrivée à la clinique.</p>
+    </div>
+    <a class="btn" href="#searchInput">Choisir un praticien</a>
+  </div>
+</div>
+
+<!-- Fenêtre de disponibilités d'un médecin -->
+<div class="modal-backdrop" id="reservationModal" data-rdv-url="{{ url_for('rendez_vous') }}" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div>
+        <h3 id="modalTitle">Réserver une consultation</h3>
+        <p>Clinique Privée ClassicHealth · Douala</p>
+      </div>
+      <button type="button" class="modal-close-btn" data-fermer aria-label="Fermer la fenêtre">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="modalDoctorHeader" class="med-header"></div>
+
+      <label class="modal-label" for="consultationDateInput">Date de consultation souhaitée</label>
+      <input class="search-input" id="consultationDateInput" type="date" min="{{ aujourdhui }}" value="{{ aujourdhui }}">
+
+      <label class="modal-label">Créneaux (30 minutes)</label>
+      <div class="modal-slots-list" id="modalSlotsGrid"></div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" data-fermer>Annuler</button>
+        <button type="button" class="btn btn-primary" id="confirmSlotBtn" disabled>Réserver ce créneau</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/medecins.js') }}"></script>
+{% endblock %}

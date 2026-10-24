@@ -1,0 +1,62 @@
+{% extends "admin/base_admin.html" %}
+{% block titre %}Tableau de bord · Espace secrétariat{% endblock %}
+
+{% block contenu %}
+<div class="container ad-wrap">
+  <h1 class="ad-title">Tableau de bord</h1>
+
+  <div class="ad-kpis">
+    <div class="ad-kpi"><b>{{ c.aujourdhui }}</b><span>Rendez-vous aujourd'hui</span></div>
+    <div class="ad-kpi"><b>{{ c.a_venir }}</b><span>Rendez-vous à venir</span></div>
+    <div class="ad-kpi"><b>{{ c.patients }}</b><span>Patients</span></div>
+    <div class="ad-kpi"><b>{{ c.medecins }}</b><span>Médecins</span></div>
+    <div class="ad-kpi"><b>{{ c.total }}</b><span>Rendez-vous au total</span></div>
+    <div class="ad-kpi"><b>{{ c.taux_annulation }} %</b><span>Taux d'annulation</span></div>
+  </div>
+
+  <div class="ad-grid">
+    <section class="ad-card">
+      <h2>Rendez-vous par statut</h2>
+      {% for s in par_statut %}
+      <div class="ad-bar"><span>{{ statuts[s.statut] }}</span><div><i class="st-bg-{{ s.statut }}" style="width: {{ s.pct }}%"></i></div><b>{{ s.n }}</b></div>
+      {% endfor %}
+    </section>
+    <section class="ad-card">
+      <h2>Rendez-vous par spécialité <small>(hors annulés)</small></h2>
+      {% for s in par_specialite %}
+      <div class="ad-bar"><span>{{ s.nom }}</span><div><i style="width: {{ s.pct }}%"></i></div><b>{{ s.n }}</b></div>
+      {% endfor %}
+    </section>
+    <section class="ad-card">
+      <h2>Nouveaux patients par semaine</h2>
+      <div class="ad-cols">
+        {% for w in semaines %}
+        <div class="ad-col"><b>{{ w.n }}</b><div><i style="height: {{ w.pct }}%"></i></div><span>{{ w.debut.strftime('%d/%m') }}</span></div>
+        {% endfor %}
+      </div>
+      <p class="ad-note">Semaines commençant le lundi indiqué.</p>
+    </section>
+    <section class="ad-card">
+      <h2>Rendez-vous du jour</h2>
+      {% if du_jour %}
+      <table class="ad-table ad-compact">
+        <tbody>{% for r in du_jour %}
+          <tr><td>{{ r.heure }}</td><td>{{ r.prenom }} {{ r.nom }}</td><td>{{ r.medecin }}</td><td><span class="ms-badge st-{{ r.statut }}">{{ statuts[r.statut] }}</span></td></tr>
+        {% endfor %}</tbody>
+      </table>
+      {% else %}<p class="ad-note">Aucun rendez-vous aujourd'hui.</p>{% endif %}
+    </section>
+  </div>
+
+  <section class="ad-card">
+    <h2>Activité par médecin</h2>
+    <div class="ad-scroll">
+    <table class="ad-table">
+      <thead><tr><th>Médecin</th><th>Spécialité</th><th>Prévus</th><th>Effectués</th><th>Annulés</th><th>Total</th></tr></thead>
+      <tbody>{% for m in par_medecin %}
+        <tr><td>{{ m.nom }}</td><td>{{ m.specialite }}</td><td>{{ m.prevus or 0 }}</td><td>{{ m.effectues or 0 }}</td><td>{{ m.annules or 0 }}</td><td><b>{{ m.n }}</b></td></tr>
+      {% endfor %}</tbody>
+    </table></div>
+  </section>
+</div>
+{% endblock %}

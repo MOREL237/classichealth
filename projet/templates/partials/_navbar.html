@@ -1,0 +1,42 @@
+<header class="ch-navbar">
+  <div class="container navbar-inner">
+    <a href="{{ url_for('accueil') }}" class="brand-logo" aria-label="ClassicHealth Accueil">
+      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="40" height="40" rx="12" fill="#0D9488"/>
+        <path d="M10 20h5l3-7 5 14 4-10 2 3h5" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="31" cy="11" r="2.5" fill="#5EEAD4"/>
+      </svg>
+      <div>
+        <div class="brand-name">Classic<span>Health</span></div>
+        <span class="brand-tagline">Clinique Privée · Douala</span>
+      </div>
+    </a>
+
+    <nav>
+      <ul class="nav-links">
+        <li><a href="{{ url_for('accueil') }}" class="{{ 'active' if request.endpoint == 'accueil' }}">Accueil</a></li>
+        <li><a href="{{ url_for('medecins') }}" class="{{ 'active' if request.endpoint == 'medecins' }}">Médecins &amp; Spécialités</a></li>
+        <li><a href="{{ url_for('rendez_vous') }}" class="{{ 'active' if request.endpoint == 'rendez_vous' }}">Prendre RDV</a></li>
+        <li><a href="{{ url_for('mes_consultations') }}" class="{{ 'active' if request.endpoint == 'mes_consultations' }}">Mes consultations</a></li>
+        <li><a href="{{ url_for('accueil') }}#comment-ca-marche">Comment ça marche</a></li>
+        <li><a href="{{ url_for('accueil') }}#infos-clinique">Infos Clinique</a></li>
+      </ul>
+    </nav>
+
+    <div class="nav-actions">
+      <button class="theme-toggle-btn" id="btn-toggle-theme" title="Changer le thème" aria-label="Changer le thème">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+      </button>
+
+      <a class="btn btn-primary" href="{{ url_for('rendez_vous') }}">Prendre rendez-vous</a>
+
+      <button class="mobile-menu-btn" aria-label="Menu mobile">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block titre %}Rendez-vous confirmé · ClassicHealth Douala{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/rendezvous.css') }}">
+{% endblock %}
+
+{% block contenu %}
+<div class="container rv-success-wrap">
+  <div class="rv-success">
+    {% if nouveau %}<div class="rv-success-icon" aria-hidden="true">✓</div>{% endif %}
+    <small class="rv-kicker">{{ 'Rendez-vous enregistré' if nouveau else 'Convocation' }}</small>
+    <h1>{{ 'Votre consultation est réservée' if nouveau else 'Rendez-vous du ' ~ info.date_longue }}</h1>
+    <p>Conservez votre numéro de dossier et présentez-vous 10 minutes avant l'horaire avec une pièce d'identité valide.</p>
+
+    <dl class="rv-recap">
+      <div><dt>Statut</dt><dd>{{ {'prevu': 'Prévu', 'effectue': 'Effectué', 'annule': 'Annulé'}[r.statut] }}</dd></div>
+      <div><dt>Référence</dt><dd class="rv-ref">{{ info.ref }}</dd></div>
+      <div><dt>Praticien</dt><dd>{{ r.medecin_nom }} ({{ r.specialite }})</dd></div>
+      <div><dt>Date</dt><dd>{{ info.date_longue }}</dd></div>
+      <div><dt>Horaire</dt><dd>{{ r.heure }} – {{ info.fin }}</dd></div>
+      <div><dt>Patient</dt><dd>{{ r.prenom }} {{ r.patient_nom }}</dd></div>
+      <div><dt>Téléphone</dt><dd>{{ info.telephone }}</dd></div>
+      <div><dt>Motif</dt><dd>{{ r.motif }}</dd></div>
+      <div><dt>Lieu</dt><dd>Boulevard de la Liberté, Akwa · Douala</dd></div>
+    </dl>
+
+    <div class="rv-actions">
+      <a class="btn btn-primary" href="{{ url_for('confirmation_ics', rdv_id=r.id) }}">Ajouter au calendrier (.ics)</a>
+      <button type="button" class="btn btn-secondary" onclick="window.print()">Imprimer la convocation</button>
+      <a class="btn btn-secondary" href="{{ url_for('mes_consultations') }}">Mes consultations</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

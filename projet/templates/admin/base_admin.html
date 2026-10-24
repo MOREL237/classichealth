@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">{% endblock %}
+
+{% block navbar %}
+<header class="ch-navbar">
+  <div class="container navbar-inner">
+    <a href="{{ url_for('admin.tableau_de_bord') }}" class="brand-logo" aria-label="Administration ClassicHealth">
+      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="40" height="40" rx="12" fill="#0D9488"/><path d="M10 20h5l3-7 5 14 4-10 2 3h5" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div><div class="brand-name">Classic<span>Health</span></div><span class="brand-tagline">Espace secrétariat</span></div>
+    </a>
+    {% if session.admin_id %}
+    <nav><ul class="nav-links">
+      <li><a href="{{ url_for('admin.tableau_de_bord') }}" class="{{ 'active' if request.endpoint == 'admin.tableau_de_bord' }}">Tableau de bord</a></li>
+      <li><a href="{{ url_for('admin.rendez_vous') }}" class="{{ 'active' if request.endpoint == 'admin.rendez_vous' }}">Rendez-vous</a></li>
+      <li><a href="{{ url_for('admin.patients') }}" class="{{ 'active' if request.endpoint == 'admin.patients' }}">Patients</a></li>
+      <li><a href="{{ url_for('accueil') }}">Voir le site</a></li>
+    </ul></nav>
+    {% endif %}
+    <div class="nav-actions">
+      <button class="theme-toggle-btn" id="btn-toggle-theme" type="button" aria-label="Changer le thème">◐</button>
+      {% if session.admin_id %}
+      <form method="post" action="{{ url_for('admin.deconnexion') }}" class="ad-inline">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="btn btn-secondary btn-sm" type="submit">Déconnexion ({{ session.admin_login }})</button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+</header>
+{% endblock %}
+
+{% block pied %}<footer class="ad-footer"><div class="container">ClassicHealth · Espace secrétariat · {{ annee }}</div></footer>{% endblock %}

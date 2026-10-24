@@ -1,0 +1,49 @@
+/* Espace administrateur (s'ajoute à style.css ; réutilise .rv-input, .ms-badge, .btn de rendezvous/monespace) */
+@import url("medecins.css");
+@import url("rendezvous.css");
+@import url("monespace.css");
+.ad-inline{display:inline}
+.ad-wrap{padding:2rem 1.5rem 4rem}
+.ad-title{font-size:1.8rem;margin-bottom:1.5rem}
+.ad-title small{font-size:.9rem;color:var(--text-muted);font-weight:500;margin-left:.6rem}
+.ad-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1rem;margin-bottom:1.5rem}
+.ad-kpi{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.1rem 1.25rem;box-shadow:var(--shadow-sm)}
+.ad-kpi b{display:block;font-family:var(--font-display);font-size:2rem;color:var(--primary);line-height:1.1}
+.ad-kpi span{font-size:.82rem;color:var(--text-muted);font-weight:600}
+.ad-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+.ad-card{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;box-shadow:var(--shadow-sm)}
+.ad-card h2{font-size:1.05rem;margin-bottom:1rem}
+.ad-card h2 small{font-weight:500;color:var(--text-muted);font-size:.78rem}
+.ad-bar{display:grid;grid-template-columns:150px 1fr 40px;gap:.7rem;align-items:center;font-size:.85rem;margin-bottom:.6rem}
+.ad-bar div{height:10px;background:var(--bg-muted);border-radius:99px;overflow:hidden}
+.ad-bar i{display:block;height:100%;background:var(--primary);border-radius:99px}
+.ad-bar b{text-align:right}
+.st-bg-prevu{background:#10B981!important}.st-bg-effectue{background:#0284C7!important}.st-bg-annule{background:#EF4444!important}
+.ad-cols{display:flex;gap:.6rem;align-items:flex-end;height:170px}
+.ad-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:.3rem;height:100%;font-size:.75rem;color:var(--text-muted)}
+.ad-col div{flex:1;width:100%;display:flex;align-items:flex-end;background:var(--bg-muted);border-radius:8px;overflow:hidden}
+.ad-col i{display:block;width:100%;background:var(--primary);border-radius:8px 8px 0 0;min-height:2px}
+.ad-col b{color:var(--text-main);font-size:.85rem}
+.ad-note{font-size:.8rem;color:var(--text-muted);margin-top:.8rem}
+.ad-scroll{overflow-x:auto}
+.ad-table{width:100%;border-collapse:collapse;font-size:.88rem}
+.ad-table th{text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--text-subtle);padding:.6rem .7rem;border-bottom:1px solid var(--border);white-space:nowrap}
+.ad-table td{padding:.65rem .7rem;border-bottom:1px solid var(--border);vertical-align:top}
+.ad-table tr:last-child td{border-bottom:0}
+.ad-table small{color:var(--text-muted)}
+.ad-motif{max-width:260px;color:var(--text-muted)}
+.ad-vide{text-align:center;color:var(--text-muted);padding:2rem!important}
+.ad-compact td{padding:.45rem .5rem;font-size:.84rem}
+.ad-actions{white-space:nowrap}
+.ad-actions .btn{margin-right:.3rem}
+.ad-filters{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.25rem;align-items:center}
+.ad-filters .rv-input{width:auto;min-width:150px}
+.ad-pager{display:flex;justify-content:center;align-items:center;gap:1rem;margin-top:1.25rem;font-size:.9rem;color:var(--text-muted)}
+.ad-login-wrap{display:flex;justify-content:center;padding:4rem 1.5rem}
+.ad-login{width:100%;max-width:400px;background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-xl);padding:2rem;box-shadow:var(--shadow-lg);display:flex;flex-direction:column;gap:.5rem}
+.ad-login h1{font-size:1.5rem}
+.ad-login p{color:var(--text-muted);font-size:.9rem;margin-bottom:.8rem}
+.ad-login label{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-top:.5rem}
+.ad-login .btn{margin-top:1rem}
+.ad-footer{padding:1.5rem 0;border-top:1px solid var(--border);font-size:.82rem;color:var(--text-muted);text-align:center;margin-top:auto}
+@media (max-width:900px){.ad-grid{grid-template-columns:1fr}.ad-bar{grid-template-columns:110px 1fr 36px}}

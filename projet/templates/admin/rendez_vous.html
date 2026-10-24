@@ -1,0 +1,58 @@
+{% extends "admin/base_admin.html" %}
+{% block titre %}Rendez-vous · Espace secrétariat{% endblock %}
+
+{% macro pager() %}
+{% if pages > 1 %}
+<nav class="ad-pager" aria-label="Pagination">
+  {% if page > 1 %}<a class="btn btn-secondary btn-sm" href="{{ url_for('admin.rendez_vous', page=page-1, **filtres) }}">← Précédent</a>{% endif %}
+  <span>Page {{ page }} / {{ pages }}</span>
+  {% if page < pages %}<a class="btn btn-secondary btn-sm" href="{{ url_for('admin.rendez_vous', page=page+1, **filtres) }}">Suivant →</a>{% endif %}
+</nav>
+{% endif %}
+{% endmacro %}
+
+{% block contenu %}
+<div class="container ad-wrap">
+  <h1 class="ad-title">Rendez-vous <small>{{ total }} résultat{{ 's' if total > 1 }}</small></h1>
+
+  <form class="ad-filters" method="get">
+    <input class="rv-input" name="q" value="{{ filtres.q or '' }}" placeholder="Patient ou téléphone" aria-label="Recherche">
+    <select class="rv-input" name="medecin" aria-label="Médecin">
+      <option value="">Tous les médecins</option>
+      {% for m in medecins %}<option value="{{ m.id }}" {{ 'selected' if filtres.medecin == m.id|string }}>{{ m.nom }} ({{ m.specialite }})</option>{% endfor %}
+    </select>
+    <select class="rv-input" name="statut" aria-label="Statut">
+      <option value="">Tous les statuts</option>
+      {% for k, v in statuts.items() %}<option value="{{ k }}" {{ 'selected' if filtres.statut == k }}>{{ v }}</option>{% endfor %}
+    </select>
+    <input class="rv-input" type="date" name="du" value="{{ filtres.du or '' }}" aria-label="Du">
+    <input class="rv-input" type="date" name="au" value="{{ filtres.au or '' }}" aria-label="Au">
+    <button class="btn btn-primary btn-sm" type="submit">Filtrer</button>
+    <a class="btn btn-secondary btn-sm" href="{{ url_for('admin.rendez_vous') }}">Réinitialiser</a>
+    <a class="btn btn-secondary btn-sm" href="{{ url_for('admin.rendez_vous_csv', **filtres) }}">Exporter en CSV</a>
+  </form>
+
+  <div class="ad-card ad-scroll">
+    <table class="ad-table" id="tableRdv" data-url="{{ url_for('admin.rendez_vous') }}">
+      <thead><tr><th>Date</th><th>Heure</th><th>Patient</th><th>Téléphone</th><th>Médecin</th><th>Motif</th><th>Statut</th><th>Actions</th></tr></thead>
+      <tbody>
+      {% for r in lignes %}
+        <tr data-id="{{ r.id }}">
+          <td>{{ r.date|fr_date }}</td><td>{{ r.heure }}</td>
+          <td>{{ r.prenom }} {{ r.nom }}</td><td>{{ r.telephone }}</td>
+          <td>{{ r.medecin }}<br><small>{{ r.specialite }}</small></td>
+          <td class="ad-motif">{{ r.motif }}</td>
+          <td><span class="ms-badge st-{{ r.statut }}" data-badge>{{ statuts[r.statut] }}</span></td>
+          <td class="ad-actions" data-actions data-statut="{{ r.statut }}"></td>
+        </tr>
+      {% else %}
+        <tr><td colspan="8" class="ad-vide">Aucun rendez-vous ne correspond à ces filtres.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {{ pager() }}
+</div>
+{% endblock %}
+
+{% block scripts %}<script src="{{ url_for('static', filename='js/admin.js') }}"></script>{% endblock %}

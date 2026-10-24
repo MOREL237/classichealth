@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block titre %}Prendre rendez-vous · ClassicHealth Clinique Privée Douala{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/medecins.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/rendezvous.css') }}">
+{% endblock %}
+
+{% block contenu %}
+<section class="page-hero">
+  <div class="container">
+    <div class="hero-badge"><span class="pulse-dot"></span> Consultations 08h00 – 12h00 · Douala</div>
+    <h1 class="page-title">Réservation de consultation</h1>
+    <p class="page-subtitle">Choisissez un spécialiste, un créneau de 30 minutes, puis indiquez vos coordonnées. Votre rendez-vous est enregistré immédiatement.</p>
+  </div>
+</section>
+
+<div class="container rv-wrap">
+  <ol class="rv-stepper" id="rvStepper" aria-label="Progression du rendez-vous">
+    <li class="rv-step" data-step="1"><span class="rv-step-num">1</span><span><small>Étape 1</small>Spécialiste</span></li>
+    <li class="rv-step" data-step="2"><span class="rv-step-num">2</span><span><small>Étape 2</small>Date &amp; horaire</span></li>
+    <li class="rv-step" data-step="3"><span class="rv-step-num">3</span><span><small>Étape 3</small>Coordonnées</span></li>
+    <li class="rv-step" data-step="4"><span class="rv-step-num">4</span><span><small>Étape 4</small>Confirmation</span></li>
+  </ol>
+
+  <div class="rv-layout">
+    <section>
+      <!-- Étape 1 -->
+      <div class="rv-panel" id="rvPanel1">
+        <h2>Choisissez votre médecin</h2>
+        <p>Les consultations ont lieu uniquement le matin, de 08h00 à 12h00.</p>
+        <div class="chips-bar" id="rvChips" role="tablist" aria-label="Filtrer par spécialité">
+          <button type="button" class="filter-chip active" data-specialite="">Toutes les spécialités</button>
+          {% for s in specialites %}
+          <button type="button" class="filter-chip" data-specialite="{{ s.nom }}">{{ s.nom }}</button>
+          {% endfor %}
+        </div>
+        <div class="rv-docs">
+          {% for m in medecins %}
+          <button type="button" class="rv-doc" data-id="{{ m.id }}" data-nom="{{ m.nom }}" data-specialite="{{ m.specialite }}"
+                  data-initiales="{{ m.initiales }}" data-jours="{{ m.jours }}">
+            <span class="med-avatar">{% if m.photo %}<img src="{{ url_for('static', filename='images/' ~ m.photo) }}" alt="">{% else %}{{ m.initiales }}{% endif %}</span>
+            <span class="rv-doc-text">
+              <span class="med-badge">{{ m.specialite }}</span>
+              <strong>{{ m.nom }}</strong>
+              <small>Jours : {{ m.jours_texte }}</small>
+            </span>
+          </button>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Étape 2 -->
+      <div class="rv-panel" id="rvPanel2" hidden>
+        <h2>Sélectionnez le jour et l'horaire</h2>
+        <p id="rvHint"></p>
+        <span class="rv-label">Prochaines dates disponibles</span>
+        <div class="rv-dates" id="rvDates"></div>
+        <span class="rv-label">Créneaux de 30 minutes</span>
+        <div class="modal-slots-list" id="rvSlots"></div>
+      </div>
+
+      <!-- Étape 3 -->
+      <div class="rv-panel" id="rvPanel3" hidden>
+        <h2>Vos coordonnées</h2>
+        <p>Votre numéro de téléphone identifie votre dossier de patient.</p>
+        <form id="rvForm" novalidate>
+          <div class="rv-section">
+            <h3><span class="rv-num">1</span> Identité du patient</h3>
+            <div class="rv-form">
+              <div class="rv-field"><label for="fNom">Nom de famille</label><input class="rv-input" id="fNom" maxlength="60" placeholder="ex. Ngono" autocomplete="family-name"><span class="rv-error" data-champ="nom"></span></div>
+              <div class="rv-field"><label for="fPrenom">Prénom(s)</label><input class="rv-input" id="fPrenom" maxlength="60" placeholder="ex. Samuel Franck" autocomplete="given-name"><span class="rv-error" data-champ="prenom"></span></div>
+              <div class="rv-field"><label for="fNaissance">Date de naissance</label><input class="rv-input" type="date" id="fNaissance" max="{{ aujourdhui }}"><span class="rv-error" data-champ="date_naissance"></span></div>
+            </div>
+          </div>
+
+          <div class="rv-section">
+            <h3><span class="rv-num">2</span> Coordonnées</h3>
+            <div class="rv-form">
+              <div class="rv-field">
+                <label for="fTel">Téléphone mobile (Cameroun)</label>
+                <div class="rv-phone"><span>🇨🇲 +237</span><input id="fTel" type="tel" inputmode="numeric" maxlength="12" placeholder="699 45 88 12" autocomplete="tel-national"></div>
+                <span class="rv-error" data-champ="telephone"></span>
+              </div>
+              <div class="rv-field"><label for="fVille">Ville de résidence</label>
+                <select class="rv-input" id="fVille">{% for v in villes %}<option>{{ v }}</option>{% endfor %}</select>
+                <span class="rv-error" data-champ="ville"></span></div>
+            </div>
+          </div>
+
+          <div class="rv-section">
+            <h3><span class="rv-num">3</span> Motif de consultation</h3>
+            <p class="rv-hint" id="rvMotifHint"></p>
+            <div class="rv-pills" id="rvPills" role="radiogroup" aria-label="Type de visite">
+              {% for mo in motifs %}
+              <button type="button" class="rv-pill{{ ' selected' if loop.first }}" role="radio" aria-checked="{{ 'true' if loop.first else 'false' }}" data-valeur="{{ mo }}">{{ mo }}</button>
+              {% endfor %}
+            </div>
+            <span class="rv-error" data-champ="motif"></span>
+            <div class="rv-field" style="margin-top:1rem"><label for="fNotes">Symptômes ou antécédents (facultatif)</label>
+              <textarea class="rv-input" id="fNotes" rows="2" maxlength="300" placeholder="Ex. contrôle de tension, essoufflements récents, allergies connues..."></textarea></div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Étape 4 -->
+      <div class="rv-panel" id="rvPanel4" hidden>
+        <h2>Vérifiez votre rendez-vous</h2>
+        <p>Relisez les informations avant de confirmer.</p>
+        <div class="rv-ticket">
+          <div class="rv-box"><small>Praticien</small><strong id="tDoc"></strong><span id="tSpec"></span></div>
+          <div class="rv-box"><small>Créneau</small><strong id="tDate"></strong><span id="tHeure"></span></div>
+          <div class="rv-box"><small>Patient</small><strong id="tPatient"></strong><span id="tTel"></span><span id="tVille"></span></div>
+          <div class="rv-box"><small>Motif</small><strong id="tMotif"></strong></div>
+        </div>
+        <p class="rv-note">Présentez-vous 10 minutes avant l'horaire avec une pièce d'identité valide (CNI ou passeport).</p>
+      </div>
+
+      <p class="rv-alert" id="rvAlert" role="alert" hidden></p>
+
+      <div class="rv-nav">
+        <button type="button" class="btn btn-secondary" id="rvPrev" style="visibility:hidden">← Précédent</button>
+        <button type="button" class="btn btn-primary" id="rvNext">Continuer</button>
+      </div>
+    </section>
+
+    <aside class="rv-aside">
+      <h3>Votre rendez-vous</h3>
+      <div class="rv-sum-doc" id="sDoc"><span class="med-avatar" id="sInit">?</span><div><small id="sSpec">Spécialité</small><strong id="sNom">Aucun médecin choisi</strong></div></div>
+      <dl>
+        <div><dt>Date</dt><dd id="sDate">À choisir</dd></div>
+        <div><dt>Créneau</dt><dd id="sHeure">À choisir</dd></div>
+        <div><dt>Durée</dt><dd>30 minutes</dd></div>
+      </dl>
+      <p>ClassicHealth, Boulevard de la Liberté, Akwa · Douala<br>Consultations : Lun – Sam, 08h00 – 12h00</p>
+    </aside>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}<script src="{{ url_for('static', filename='js/rendezvous.js') }}"></script>{% endblock %}

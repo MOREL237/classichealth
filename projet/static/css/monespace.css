@@ -1,0 +1,44 @@
+/* Page « Mes consultations » (s'ajoute à medecins.css et rendezvous.css) */
+.ms-login{display:grid;grid-template-columns:1fr 1fr auto;gap:1rem;align-items:end;max-width:760px;background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;box-shadow:var(--shadow-md)}
+.ms-login .rv-alert{grid-column:1/-1;margin:0}
+.ms-aide{margin-top:1.25rem;font-size:.9rem;color:var(--text-muted)}
+.ms-aide a{color:var(--primary);font-weight:600}
+.ms-wrap{padding:2rem 1.5rem 4rem}
+.ms-strip{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem;background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.1rem 1.4rem;box-shadow:var(--shadow-sm);margin-bottom:1.5rem}
+.ms-id{display:flex;align-items:center;gap:1rem}
+.ms-id h1{font-size:1.3rem}
+.ms-id p{font-size:.85rem;color:var(--text-muted)}
+.ms-strip-actions{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}
+.ms-tabs{display:inline-flex;gap:.3rem;padding:.3rem;background:var(--bg-muted);border-radius:12px;margin-bottom:1.5rem}
+.ms-tab{padding:.6rem 1.2rem;border-radius:9px;font-weight:600;font-size:.9rem;color:var(--text-muted);display:flex;align-items:center;gap:.5rem}
+.ms-tab span{font-size:.75rem;padding:.1rem .5rem;border-radius:99px;background:var(--border)}
+.ms-tab.active{background:var(--bg-surface);color:var(--text-main);box-shadow:var(--shadow-sm)}
+.ms-tab.active span{background:var(--primary-subtle);color:var(--primary)}
+.ms-list{display:flex;flex-direction:column;gap:1.25rem}
+.ms-card{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden}
+.ms-card-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:.6rem;padding:.8rem 1.4rem;background:var(--bg-muted);border-bottom:1px solid var(--border)}
+.ms-ref{font-family:ui-monospace,monospace;font-size:.78rem;font-weight:700;color:var(--text-muted)}
+.ms-card-body{display:grid;grid-template-columns:1fr 1.3fr;gap:1.5rem;align-items:center;padding:1.4rem}
+.ms-past .ms-card-body{display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem}
+.ms-doc{display:flex;gap:1rem;align-items:flex-start}
+.ms-doc .med-avatar{width:60px;height:60px;font-size:1.2rem;flex-shrink:0}
+.ms-doc small{display:block;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--primary);margin-bottom:.15rem}
+.ms-doc h3{font-size:1.15rem}
+.ms-sub{font-size:.8rem;color:var(--text-muted);margin-top:.2rem}
+.ms-info{display:grid;grid-template-columns:1fr 1fr;gap:1rem;background:var(--bg-muted);border:1px solid var(--border);border-radius:12px;padding:1rem}
+.ms-info dt{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-subtle);margin-bottom:.2rem}
+.ms-info dd{font-weight:600;font-size:.92rem}
+.ms-full{grid-column:1/-1;padding-top:.7rem;border-top:1px solid var(--border)}
+.ms-full dd{font-weight:400;font-style:italic;color:var(--text-muted)}
+.ms-card-foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.8rem;padding:.9rem 1.4rem;border-top:1px solid var(--border)}
+.ms-btns{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.btn-danger{background:rgba(239,68,68,.1);color:#DC2626;border:1px solid rgba(239,68,68,.35)}
+.btn-danger:hover{background:rgba(239,68,68,.18)}
+.ms-badge{display:inline-block;padding:.15rem .6rem;border-radius:99px;font-size:.72rem;font-weight:700;text-transform:none;letter-spacing:0}
+.st-prevu{background:rgba(16,185,129,.14);color:#047857}
+.st-effectue{background:rgba(2,132,199,.14);color:#0369A1}
+.st-annule{background:rgba(239,68,68,.12);color:#DC2626}
+.ms-toasts{position:fixed;top:90px;right:1.2rem;z-index:300;display:flex;flex-direction:column;gap:.5rem}
+.ms-toast{background:#0F172A;color:#FFF;padding:.8rem 1.1rem;border-radius:14px;font-size:.85rem;font-weight:600;box-shadow:var(--shadow-lg);border:1px solid rgba(16,185,129,.4)}
+@media (max-width:900px){.ms-login{grid-template-columns:1fr}.ms-card-body{grid-template-columns:1fr}}
+@media print{.ms-tabs,.ms-card-foot,.ms-strip-actions,.ms-toasts,.btn{display:none!important}}

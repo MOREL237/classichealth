@@ -1,0 +1,19 @@
+{% extends "admin/base_admin.html" %}
+{% block titre %}Connexion · Espace secrétariat ClassicHealth{% endblock %}
+
+{% block contenu %}
+<div class="container ad-login-wrap">
+  <form class="ad-login" method="post" action="{{ url_for('admin.connexion') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="suivant" value="{{ suivant }}">
+    <h1>Espace secrétariat</h1>
+    <p>Accès réservé au personnel de la clinique.</p>
+    <label for="login">Identifiant</label>
+    <input class="rv-input" id="login" name="login" autocomplete="username" required autofocus>
+    <label for="mdp">Mot de passe</label>
+    <input class="rv-input" id="mdp" name="mot_de_passe" type="password" autocomplete="current-password" required>
+    {% if erreur %}<p class="rv-alert" role="alert">{{ erreur }}</p>{% endif %}
+    <button class="btn btn-primary" type="submit">Se connecter</button>
+  </form>
+</div>
+{% endblock %}

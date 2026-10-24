@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block titre %}Mes consultations · ClassicHealth Douala{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/medecins.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/rendezvous.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/monespace.css') }}">
+{% endblock %}
+
+{% block contenu %}
+{% if not patient %}
+<section class="page-hero">
+  <div class="container">
+    <div class="hero-badge"><span class="pulse-dot"></span> Espace patient · Douala</div>
+    <h1 class="page-title">Mes rendez-vous &amp; consultations</h1>
+    <p class="page-subtitle">Retrouvez vos rendez-vous à venir, votre historique, et déplacez ou annulez un créneau. Identifiez-vous avec le numéro et la date de naissance utilisés lors de la réservation.</p>
+
+    <form class="ms-login" method="post" action="{{ url_for('mes_consultations_connexion') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="rv-field">
+        <label for="msTel">Téléphone mobile</label>
+        <div class="rv-phone"><span>🇨🇲 +237</span><input id="msTel" name="telephone" type="tel" inputmode="numeric" maxlength="12" placeholder="699 45 88 12" required autocomplete="tel-national"></div>
+      </div>
+      <div class="rv-field">
+        <label for="msNaissance">Date de naissance</label>
+        <input class="rv-input" id="msNaissance" name="date_naissance" type="date" max="{{ aujourdhui }}" required>
+      </div>
+      <button class="btn btn-primary" type="submit">Consulter mon dossier</button>
+      {% if erreur %}<p class="rv-alert" role="alert">{{ erreur }}</p>{% endif %}
+    </form>
+    <p class="ms-aide">Pas encore de rendez-vous ? <a href="{{ url_for('rendez_vous') }}">Prendre rendez-vous</a>. Après une réservation, votre dossier s'ouvre automatiquement ici.</p>
+  </div>
+</section>
+{% else %}
+<div class="container ms-wrap">
+  <div class="ms-strip">
+    <div class="ms-id">
+      <span class="med-avatar">{{ (patient.prenom[0] ~ patient.nom[0])|upper }}</span>
+      <div>
+        <h1>{{ patient.prenom }} {{ patient.nom }}</h1>
+        <p>{{ telephone }} · {{ patient.ville }}</p>
+      </div>
+    </div>
+    <div class="ms-strip-actions">
+      <button type="button" class="btn btn-secondary btn-sm" onclick="window.print()">Imprimer</button>
+      <a class="btn btn-primary btn-sm" href="{{ url_for('rendez_vous') }}">Prendre RDV</a>
+      <form method="post" action="{{ url_for('mes_consultations_deconnexion') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="btn btn-secondary btn-sm" type="submit">Se déconnecter</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="ms-tabs" role="tablist">
+    <button type="button" class="ms-tab active" id="tabUp" role="tab" data-onglet="up">Rendez-vous à venir <span>{{ a_venir|length }}</span></button>
+    <button type="button" class="ms-tab" id="tabPast" role="tab" data-onglet="past">Historique <span>{{ passes|length }}</span></button>
+  </div>
+
+  <div class="ms-list" id="listUp">
+    {% for r in a_venir %}
+    <article class="ms-card" data-id="{{ r.id }}" data-medecin="{{ r.medecin_id }}" data-nom="{{ r.medecin }}" data-spec="{{ r.specialite }}">
+      <header class="ms-card-head"><span class="ms-ref">REF : {{ r.ref }}</span><span class="ms-badge st-prevu">Confirmé</span></header>
+      <div class="ms-card-body">
+        <div class="ms-doc"><span class="med-avatar">{{ r.initiales }}</span><div><small>{{ r.specialite }}</small><h3>{{ r.medecin }}</h3></div></div>
+        <dl class="ms-info">
+          <div><dt>Date</dt><dd>{{ r.date_longue }}</dd></div>
+          <div><dt>Créneau</dt><dd>{{ r.heure }} – {{ r.fin }} (30 min)</dd></div>
+          <div class="ms-full"><dt>Motif</dt><dd>{{ r.motif }}</dd></div>
+        </dl>
+      </div>
+      <footer class="ms-card-foot">
+        <div class="ms-btns">
+          <a class="btn btn-secondary btn-sm" href="{{ url_for('confirmation_ics', rdv_id=r.id) }}">Ajouter à l'agenda (.ics)</a>
+          <a class="btn btn-secondary btn-sm" href="{{ url_for('confirmation', rdv_id=r.id) }}">Convocation</a>
+        </div>
+        <div class="ms-btns">
+          <button type="button" class="btn btn-secondary btn-sm" data-deplacer>Déplacer</button>
+          <button type="button" class="btn btn-danger btn-sm" data-annuler>Annuler</button>
+        </div>
+      </footer>
+    </article>
+    {% else %}
+    <div class="empty-state"><h3 class="empty-title">Aucun rendez-vous à venir</h3>
+      <p class="empty-text">Réservez une consultation avec l'un de nos spécialistes.</p>
+      <a class="btn btn-primary" href="{{ url_for('rendez_vous') }}">Prendre rendez-vous</a></div>
+    {% endfor %}
+  </div>
+
+  <div class="ms-list" id="listPast" hidden>
+    {% for r in passes %}
+    <article class="ms-card ms-past">
+      <div class="ms-card-body">
+        <div class="ms-doc"><span class="med-avatar">{{ r.initiales }}</span>
+          <div><small>{{ r.specialite }} · <span class="ms-badge st-{{ r.statut }}">{{ r.libelle }}</span></small><h3>{{ r.medecin }}</h3>
+            <p class="ms-sub">{{ r.date_longue }} à {{ r.heure }} · REF {{ r.ref }}</p>
+            <p class="ms-sub"><em>{{ r.motif }}</em></p></div></div>
+        <div class="ms-btns">
+          <a class="btn btn-secondary btn-sm" href="{{ url_for('confirmation', rdv_id=r.id) }}">Convocation</a>
+          <a class="btn btn-primary btn-sm" href="{{ url_for('rendez_vous', medecin=r.medecin_id) }}">Reprendre RDV</a>
+        </div>
+      </div>
+    </article>
+    {% else %}
+    <div class="empty-state"><h3 class="empty-title">Aucun historique</h3><p class="empty-text">Vos consultations passées apparaîtront ici.</p></div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Déplacer -->
+<div class="modal-backdrop" id="modalDeplacer" role="dialog" aria-modal="true" aria-labelledby="titreDeplacer">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div><h3 id="titreDeplacer">Déplacer la consultation</h3><p id="sousDeplacer"></p></div>
+      <button type="button" class="modal-close-btn" data-fermer aria-label="Fermer">✕</button>
+    </div>
+    <div class="modal-body">
+      <label class="modal-label" for="nouvelleDate">Nouvelle date</label>
+      <input class="search-input" id="nouvelleDate" type="date" min="{{ aujourdhui }}" value="{{ aujourdhui }}">
+      <label class="modal-label">Créneaux (30 minutes)</label>
+      <div class="modal-slots-list" id="nouveauxCreneaux"></div>
+      <p class="rv-note">Votre ancien créneau est libéré pour les autres patients dès la confirmation.</p>
+      <p class="rv-alert" id="alerteDeplacer" role="alert" hidden></p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" data-fermer>Fermer</button>
+        <button type="button" class="btn btn-primary" id="btnDeplacer" disabled>Confirmer le nouveau créneau</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Annuler -->
+<div class="modal-backdrop" id="modalAnnuler" role="dialog" aria-modal="true" aria-labelledby="titreAnnuler">
+  <div class="modal-card" style="max-width:460px">
+    <div class="modal-body">
+      <h3 id="titreAnnuler" style="margin-bottom:.6rem">Annuler ce rendez-vous ?</h3>
+      <p id="texteAnnuler" style="color:var(--text-muted);font-size:.92rem"></p>
+      <p class="rv-alert" id="alerteAnnuler" role="alert" hidden></p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" data-fermer>Conserver le RDV</button>
+        <button type="button" class="btn btn-danger" id="btnAnnuler">Confirmer l'annulation</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="ms-toasts" id="toasts" aria-live="polite"></div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}<script src="{{ url_for('static', filename='js/monespace.js') }}"></script>{% endblock %}
